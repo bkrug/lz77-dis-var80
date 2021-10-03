@@ -11,6 +11,7 @@
 /*unsigned char
     dict[DICTSIZE + MAXMATCH];*/
 char dict[4113];
+char evan1;
 
 /* hashtable & link list table */
 /*unsigned*/ int
@@ -59,7 +60,7 @@ SendBits(/*unsigned int*/ bits, /*unsigned int*/ numbits)
     int bits;
     int numbits;
 {
-    char encodebuf[1];
+    char encodebuf[2];
     if (bitsin == 0) {
         bitbuf = bitbuf | bits;
     }
@@ -289,7 +290,9 @@ FindMatch(dctpos, startlen)
     int startlen;
 {
     /*register unsigned*/ int i, j, k;
-    /*unsigned*/ char l, unused;
+    /* Declaring make_evan seems to fix the same type of bug that 
+       assembly's EVEN command fixes.*/
+    /*unsigned*/ char l, make_evan;
     int retVal[2];
 
     i = dctpos;
