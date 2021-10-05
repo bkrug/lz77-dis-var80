@@ -71,30 +71,46 @@ int infile, outfile;
     return (i & masks[numbits]);
 }
 
-WriteLine(startpos, maxpos)
+WriteLine(startpos, afterline)
     int startpos;
-    int maxpos;
+    int afterline;
 {
-    int b, c, curpos;
-    /*char *lineToPrint;
-    lineToPrint = dict;
-    lineToPrint = lineToPrint + startpos;*/
-    for (b = 0, c = startpos; c <= maxpos && b < 128; ) {
+    int b, c;
+    if (startpos == afterline) {
+        puts("\n");
+        fputs("", outfile);
+        return;
+    }
+
+    for (b = 0, c = startpos; c < afterline && b < 128; ) {
         buff[b++] = dict[c++];
     }
+    buff[b++] = '\n';
+    buff[b++] = 0;
     puts(buff);
-    c = fputs(buff, outfile);
+    c = fwrite(buff, afterline - startpos, outfile);
     /*if (c == EOFILE) {
         puts("\nerror writing to output file");
         for (c = 0; c < 30000; ++c) {}
         exit(EXIT_FAILURE);
     }*/
-        
-    /*curpos = startpos;
+}
+
+WriteManyLines(startpos, maxpos)
+    int startpos;
+    int maxpos;
+{
+    char reclength;
+    int curpos;
+    char disp[2];
+
+    curpos = startpos;
+    while (curpos < maxpos)
     {
-    } while (curpos < maxpos && dict[curpos++] != 0)
-    return curpos;*/
-    return maxpos;
+        reclength = dict[curpos++];
+        WriteLine(curpos, curpos + reclength);
+        curpos = curpos + reclength;
+    }
 }
 
 /* main decoder */
@@ -113,17 +129,11 @@ Decode ()
         if (ReadBits(1) == 0)   /* character or match? */
         {
             dict[i++] = ReadBits(CHARBITS);
-            /*displayStr[0] = dict[i-1];
-            displayStr[1] = 0;
-            puts(displayStr);*/
-            if (dict[i-1] == 0)
-            {
-                lineStart = WriteLine(lineStart, i);
-            }
             if (i == DICTSIZE)
             {
                 i = 0;
                 bytesdecompressed = bytesdecompressed + DICTSIZE;
+                WriteManyLines(lineStart, i);
             }            
         }
         else
@@ -138,7 +148,7 @@ Decode ()
             {
                 /* Found End of Source Data */
                 if (lineStart < i) {
-                    WriteLine(lineStart, i);
+                    WriteManyLines(lineStart, i);
                 }
                 bytesdecompressed = bytesdecompressed + i;
                 return;
@@ -146,25 +156,16 @@ Decode ()
 
             /* get match position from input stream */
             j = ((i - ReadBits(DICTBITS)) & (DICTSIZE - 1));
-            /*puts("[[");
-            puts(itod(j, "      ", 6));
-            puts("]]");*/
 
             if ((i + k) >= DICTSIZE)
             {
                 do
                 {
                     dict[i++] = dict[j++];
-                    /*displayStr[0] = dict[i-1];
-                    displayStr[1] = 0;
-                    puts(displayStr);*/
                     j = j & (DICTSIZE - 1);
-                    if (dict[i-1] == 0)
-                    {
-                        lineStart = WriteLine(lineStart, i);
-                    }
                     if (i == DICTSIZE)
                     {
+                        WriteManyLines(lineStart, i);
                         bytesdecompressed = bytesdecompressed + DICTSIZE;
                         i = 0;
                     }
@@ -178,14 +179,7 @@ Decode ()
                     do
                     {
                         dict[i++] = dict[j++];
-                        /*displayStr[0] = dict[i-1];
-                        displayStr[1] = 0;
-                        puts(displayStr);*/
                         j = j & (DICTSIZE - 1);
-                        if (dict[i-1] == 0)
-                        {
-                            lineStart = WriteLine(lineStart, i);
-                        }
                     }
                     while (--k);
                 }
@@ -194,13 +188,6 @@ Decode ()
                     do
                     {
                         dict[i++] = dict[j++];
-                        /*displayStr[0] = dict[i-1];
-                        displayStr[1] = 0;
-                        puts(displayStr);*/
-                        if (dict[i-1] == 0)
-                        {
-                            lineStart = WriteLine(lineStart, i);
-                        }
                     }
                     while (--k);
                 }

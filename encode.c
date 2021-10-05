@@ -164,19 +164,19 @@ ReadDV80(startingpos)
         return EOFILE;
     while (alreadyread < SCTRLEN)
     {
-        c = fgets(buff, 81, infile);
-        for(buffpos = 0; buffpos < 81; ++buffpos)
+        c = fread(buff, 80, infile);
+        if (c < 0) {
+            eofinfile = 1;
+            return alreadyread;
+        }
+        alreadyread = alreadyread + 1;
+        dict[dictpos++] = c & 0xFF;
+        for(buffpos = 0; buffpos < c; ++buffpos)
         {
             alreadyread = alreadyread + 1;
             dict[dictpos++] = buff[buffpos];
-            if (buff[buffpos] == 0) {
-                break;
-            }
-            /*tempStr[0] = buff[buffpos];
-            tempStr[1] = 0;
-            puts(tempStr);*/
         }
-        if (c == 0 || feof(infile)) {
+        if (feof(infile)) {
             eofinfile = 1;
             return alreadyread;
         }
