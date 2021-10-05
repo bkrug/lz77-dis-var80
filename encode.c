@@ -11,7 +11,7 @@
 /*unsigned char
     dict[DICTSIZE + MAXMATCH];*/
 char dict[4113];
-char evan1;
+char even1;
 
 /* hashtable & link list table */
 /*unsigned*/ int
@@ -275,10 +275,10 @@ HashData(/*unsigned int */dictpos, /*unsigned int */bytestodo)
         }
     }
 
-    puts("\n");
+    /*puts("\n");
     for (i = 0; i < 50; ++i) {
         puts(itod(nextlink[i], "      ", 6));
-    }
+    }*/
 }
 
 /* finds match for string at position dictpos */
@@ -290,9 +290,9 @@ FindMatch(dctpos, startlen)
     int startlen;
 {
     /*register unsigned*/ int i, j, k;
-    /* Declaring make_evan seems to fix the same type of bug that 
+    /* Declaring make_even seems to fix the same type of bug that 
        assembly's EVEN command fixes.*/
-    /*unsigned*/ char l, make_evan;
+    /*unsigned*/ char l, make_even;
     int retVal[2];
 
     i = dctpos;
@@ -341,7 +341,7 @@ DictSearch(dictps, bytestodo)
     int bytestodo;
 {
     /*register unsigned*/ int i, j;
-    /*unsigned*/ int oldlen, matchpos1;
+    /*unsigned*/ int oldlen, oldpos;
     int* foundMatchVals;
     /*puts("\nSearching Dictionary");*/
 
@@ -362,18 +362,18 @@ DictSearch(dictps, bytestodo)
         if (matchlength > THRESHOLD)
         {
             oldlen = matchlength;
-            matchpos1 = matchpos;
+            oldpos = matchpos;
 
             for ( ; ; )
             {
-                foundMatchVals = FindMatch(i + 1, oldlen + 0);
+                foundMatchVals = FindMatch(i + 1, oldlen);
                 matchpos = foundMatchVals[0];
                 matchlength = foundMatchVals[1];
 
                 if (matchlength > oldlen)
                 {
                     oldlen = matchlength;
-                    matchpos1 = matchpos;
+                    oldpos = matchpos;
                     SendChar(dict[i++]);
                     j--;
                 }
@@ -390,7 +390,7 @@ DictSearch(dictps, bytestodo)
                         }
                     }
 
-                    SendMatch(oldlen, (i - matchpos1) & (DICTSIZE - 1));
+                    SendMatch(oldlen, (i - oldpos) & (DICTSIZE - 1));
                     i = i + oldlen;
                     j = j - oldlen;
                     break;

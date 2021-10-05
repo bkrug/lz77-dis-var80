@@ -12,11 +12,6 @@
     dict[DICTSIZE + MAXMATCH];*/
 char dict[4113];
 
-/* hashtable & link list table */
-/*unsigned*/ int
-    hash[HASHSIZE],
-    nextlink[DICTSIZE];
-
 /* stores input from a file */
 char buff[RECSIZE];
 int buffpos;
