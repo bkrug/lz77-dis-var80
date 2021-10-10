@@ -115,9 +115,9 @@ SendMatch(/*unsigned int */ matchlen, /*unsigned int*/ matchdistance)
 
     SendBits(matchdistance, DICTBITS);
 
-    puts(" match ");
+    /*puts(" match ");
     puts(itod(matchdistance, "      ", 6));
-    puts(itod(matchlen, "      ", 6));
+    puts(itod(matchlen, "      ", 6));*/
 }
 
 /* sends one character (or literal) to the output stream */
@@ -130,14 +130,14 @@ SendChar(/*unsigned int*/ character)
 
     SendBits(character, CHARBITS);
 
-    if (character > 31 && character < 127) {
+    /*if (character > 31 && character < 127) {
         shortCharacter[0] = character;
         shortCharacter[1] = 0;
         puts(shortCharacter);
     }
     else {
         puts(itod(character, "      ", 5));
-    }
+    }*/
 }
 
 /* initializes the search structures needed for compression */
@@ -441,7 +441,7 @@ Encode ()
 
         /*puts("\r%ld", bytescompressed);*/
 
-        dictpos = dictpos + SCTRLEN;
+        dictpos = dictpos + sectorlen;
 
         /* wrap back to beginning of dictionary when its full */
         if (dictpos == DICTSIZE)
