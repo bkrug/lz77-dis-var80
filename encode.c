@@ -181,7 +181,7 @@ ReadDV80(startingpos)
             return alreadyread;
         }
     }
-    return dictpos;
+    return alreadyread;
 }
 
 /* loads dictionary with characters from the input stream */
@@ -225,13 +225,16 @@ DeleteData(/*unsigned int*/ dictpos)
     j = dictpos;    /* put dictpos in register for more speed */
 
     /* delete all references to the sector being deleted */
-
-    for (i = 0; i < DICTSIZE; i++)
+    /*for (i = 0; i < DICTSIZE; i++)
         if ((nextlink[i] & SCTRAND) == j) nextlink[i] = NIL;
-
     for (i = 0; i < HASHSIZE; i++)
-        if ((hash[i] & SCTRAND) == j) hash[i] = NIL;
+        if ((hash[i] & SCTRAND) == j) hash[i] = NIL;*/
 
+    /* delete everything. The sector size is not constant */
+    for (i = 0; i < DICTSIZE; i++)
+        nextlink[i] = NIL;
+    for (i = 0; i < HASHSIZE; i++)
+        hash[i] = NIL;
 }
 
 /* hash data just entered into dictionary */
@@ -428,12 +431,12 @@ Encode ()
 
         /* grab more data to compress */
         if ((sectorlen = LoadDict(dictpos)) == 0) break;
-
+ 
         /* hash the data */
         HashData(dictpos, sectorlen);
 
         puts("\nSectorLen");
-        puts(itod(sectorlen, "      ", 6));
+        puts(itod(sectorlen, "      ", 7));
         /* find dictionary matches */
         DictSearch(dictpos, sectorlen);
 
@@ -444,7 +447,7 @@ Encode ()
         dictpos = dictpos + sectorlen;
 
         /* wrap back to beginning of dictionary when its full */
-        if (dictpos == DICTSIZE)
+        if (dictpos >= DICTSIZE - SCTRLEN - 81)
         {
             dictpos = 0;
             deleteflag = 1;   /* ok to delete now */

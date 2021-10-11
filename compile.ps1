@@ -22,7 +22,7 @@ Foreach ($fileToCompile in $filesToCompile) {
     }
     $sectorCount = [math]::Ceiling($recordCount / 3.0)
     if ($sectorCount -gt 255) {
-        throw 'the sector count is larger than 255. fix the script.'
+        throw 'The object file sector count is larger than 255. Upgrade the compile script to handle larger object files.'
     }
     $bytes = [System.Collections.ArrayList](
        0x07, 0x54, 0x49, 0x46, 0x49, 0x4C, 0x45, 0x53, 0x00, $sectorCount, 0x00, 0x03, 0xA0, 0x50, 0x25, 0x01,
