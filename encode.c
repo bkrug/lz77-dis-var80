@@ -8,13 +8,11 @@
 #include lz77.h
 
 /* dictionary plus MAXMATCH extra chars for string comparisions */
-/*unsigned char
-    dict[DICTSIZE + MAXMATCH];*/
 char dict[4113];
 char even1;
 
 /* hashtable & link list table */
-/*unsigned*/ int
+int
     hash[HASHSIZE],
     nextlink[DICTSIZE];
 
@@ -25,7 +23,7 @@ char eofinfile;
 char bytesput;
 
 /* misc. global variables */
-/*unsigned*/ int
+int
     matchlength,
     matchpos,
     bitbuf,
@@ -56,7 +54,7 @@ itod(nbr,str,sz) int nbr,sz; char str[];
 }
 
 /* writes multiple bit codes to the output stream */
-SendBits(/*unsigned int*/ bits, /*unsigned int*/ numbits)
+SendBits(bits, numbits)
     int bits;
     int numbits;
 {
@@ -105,7 +103,7 @@ SendBits(/*unsigned int*/ bits, /*unsigned int*/ numbits)
 }
 
 /* sends a match to the output stream */
-SendMatch(/*unsigned int */ matchlen, /*unsigned int*/ matchdistance)
+SendMatch(matchlen, matchdistance)
     int matchlen;
     int matchdistance;
 {
@@ -121,7 +119,7 @@ SendMatch(/*unsigned int */ matchlen, /*unsigned int*/ matchdistance)
 }
 
 /* sends one character (or literal) to the output stream */
-SendChar(/*unsigned int*/ character)
+SendChar(character)
     int character;
 {
     char shortCharacter[2];
@@ -143,7 +141,7 @@ SendChar(/*unsigned int*/ character)
 /* initializes the search structures needed for compression */
 InitEncode()
 {
-    /*register unsigned*/ int i;
+    int i;
 
     for (i = 0; i < HASHSIZE; i++) hash[i] = NIL;
 
@@ -185,10 +183,10 @@ ReadDV80(startingpos)
 }
 
 /* loads dictionary with characters from the input stream */
-/*unsigned int*/ LoadDict(/*unsigned int */ dictpos)
+LoadDict(dictpos)
     int dictpos;
 {
-    /*register unsigned*/ int i, j;
+    int i, j;
     /*puts("\nLoading Data");*/
 
     /*sizeof (char) == 1*/
@@ -216,11 +214,11 @@ ReadDV80(startingpos)
 /* deletes data from the dictionary search structures */
 /* this is only done when the number of bytes to be
      compressed exceeds the dictionary's size */
-DeleteData(/*unsigned int*/ dictpos)
+DeleteData(dictpos)
     int dictpos;
 {
 
-    /*register unsigned*/ int i, j;
+    int i, j;
 
     j = dictpos;    /* put dictpos in register for more speed */
 
@@ -239,11 +237,11 @@ DeleteData(/*unsigned int*/ dictpos)
 
 /* hash data just entered into dictionary */
 /* XOR hashing is used here, but practically any hash function will work */
-HashData(/*unsigned int */dictpos, /*unsigned int */bytestodo)
+HashData(dictpos, bytestodo)
     int dictpos;
     int bytestodo;
 {
-    /*register unsigned*/ int i, j, k, chrAtD;
+    int i, j, k, chrAtD;
     /*puts("\nHashing Data");*/
 
     if (bytestodo <= THRESHOLD)
@@ -261,7 +259,7 @@ HashData(/*unsigned int */dictpos, /*unsigned int */bytestodo)
             nextlink[dictpos + i] = NIL;
         }
 
-        /*unsigned*/ 
+        
         chrAtD = dict[dictpos];
         j = (chrAtD << SHIFTBITS) ^ dict[dictpos + 1];
 
@@ -287,15 +285,14 @@ HashData(/*unsigned int */dictpos, /*unsigned int */bytestodo)
 /* finds match for string at position dictpos */
 /* this search code finds the longest AND closest
      match for the string at dictpos */
-/*FindMatch(unsigned int dictpos, unsigned int startlen)*/
 FindMatch(dctpos, startlen)
     int dctpos;
     int startlen;
 {
-    /*register unsigned*/ int i, j, k;
+    int i, j, k;
     /* Declaring make_even seems to fix the same type of bug that 
        assembly's EVEN command fixes.*/
-    /*unsigned*/ char l, make_even;
+    char l, make_even;
     int retVal[2];
 
     i = dctpos;
@@ -338,13 +335,12 @@ FindMatch(dctpos, startlen)
 }
 
 /* finds dictionary matches for characters in current sector */
-/*DictSearch(unsigned int dictpos, unsigned int bytestodo)*/
 DictSearch(dictps, bytestodo)
     int dictps;
     int bytestodo;
 {
-    /*register unsigned*/ int i, j;
-    /*unsigned*/ int oldlen, oldpos;
+    int i, j;
+    int oldlen, oldpos;
     int* foundMatchVals;
     /*puts("\nSearching Dictionary");*/
 
@@ -411,8 +407,8 @@ DictSearch(dictps, bytestodo)
 /* main encoder */
 Encode ()
 {
-    /*unsigned*/ int dictpos, deleteflag, sectorlen;
-    /*unsigned long*/ int bytescompressed;
+    int dictpos, deleteflag, sectorlen;
+    int bytescompressed;
     int hashIndex;
 
     InitEncode();
